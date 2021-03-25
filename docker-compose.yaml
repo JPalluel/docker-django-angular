@@ -1,0 +1,25 @@
+version: "3"
+#we specify what configuration should be applied to each container
+services:
+  #the db container uses the docker postgres image, default port: 5432
+  db:
+    image: postgres
+  dj:
+    container_name: dj
+    #here we give the path to Django's dockerfile we created in django folder
+    build: django
+    command: python manage.py runserver 0.0.0.0:80
+    #we map here the /django dir in our repo to the /code dir in the docker container
+    volumes:
+      - ./django:/code
+      #we map port 80 on the host machine with port 80 on the container format: HOST:CONTAINER
+    ports:
+      - "80:80"
+    #this key tell compose that dj service is dependent on db service
+    depends_on:
+      - db
+  ng:
+    container_name: ng
+    build: angular
+    ports:
+      - "8080:80"
